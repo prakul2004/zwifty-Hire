@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZWIFTY Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+    }
+
+    header {
+      background: #1e3c72;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button {
+      padding: 8px 14px;
+      background: #1e3c72;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16315a;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      color: #1e3c72;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: white;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    th {
+      background: #e9eef5;
+    }
+
+    .log {
+      font-size: 13px;
+      background: #f9f9f9;
+      margin: 4px 0;
+      padding: 5px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h3>ZWIFTY – Admin Dashboard</h3>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+  <!-- ===================== EXAM ATTEMPTS ===================== -->
+  <h2>📋 Exam Attempts & Violations</h2>
+  <table id="attemptsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Violations</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- ===================== RESULTS ===================== -->
+  <h2>📊 Exam Results</h2>
+  <table id="resultsTable">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Answers Count</th>
+        <th>Violation Count</th>
+        <th>Submitted At</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+</div>
+
+<script>
+/* ================================
+   FETCH EXAM ATTEMPTS
+================================ */
+fetch("/admin/attempts")
+  .then(res => {
+    if (!res.ok) throw new Error("Unauthorized");
+    return res.json();
+  })
+  .then(data => {
+    const tbody = document.querySelector("#attemptsTable tbody");
+
+    data.forEach(user => {
+      const tr = document.createElement("tr");
+
+      const logs = (user.logs || [])
+        .map(l => `<div class="log">${l.type} – ${l.time}</div>`)
+        .join("");
+
+      tr.innerHTML = `
+        <td>${user.name || "N/A"}</td>
+        <td>${user.email}</td>
+        <td>${logs || "No violations"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  })
+  .catch(() => alert("Session expired. Login again"));
+
+/* ================================
+   FETCH RESULTS
+================================ */
+fetch("/admin/results")
+  .then(res => res.json())
+  .then(data => {
+    const tbody = document.querySelector("#resultsTable tbody");
+
+    data.forEach(r => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.email}</td>
+        <td>${(r.answers || []).length}</td>
+        <td>${(r.violations || []).length}</td>
+        <td>${new Date(r.submittedAt.seconds * 1000).toLocaleString()}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+
+/* ================================
+   LOGOUT
+================================ */
+function logout() {
+  fetch("/admin/logout")
+    .then(() => window.location.href = "/admin-login.html");
+}
+</script>
+
+</body>
+</html>

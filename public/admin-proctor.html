@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Proctor Monitor</title>
+</head>
+<body>
+<h2>🔴 Live Exam Monitoring</h2>
+<ul id="log"></ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  socket.on("violation", data => {
+    const li = document.createElement("li");
+    li.innerText = `${data.email} → ${data.type}`;
+    document.getElementById("log").appendChild(li);
+  });
+</script>
+</body>
+</html>

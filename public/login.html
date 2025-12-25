@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zwifty | Candidate Login</title>
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<script>
+/* Clear previous session */
+localStorage.clear();
+</script>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="brand">
+      <h1>ZWIFTY</h1>
+      <p>Internship Assessment Portal</p>
+    </div>
+
+    <h2>Candidate Login</h2>
+
+    <label>Full Name</label>
+    <input id="name" type="text" placeholder="Enter full name">
+
+    <label>Email Address</label>
+    <input id="email" type="email" placeholder="Enter email">
+
+    <label>Phone Number</label>
+    <input id="phone" type="tel" placeholder="Enter phone number">
+
+    <label>College / University</label>
+    <input id="college" type="text" placeholder="Enter college name">
+
+    <button onclick="login()">Proceed to System Check</button>
+
+    <p class="footer-note">
+      Ensure details are correct. These will be used for evaluation.
+    </p>
+
+  </div>
+</div>
+
+<script>
+async function login() {
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const college = document.getElementById("college").value.trim();
+
+  if (!name || !email || !phone || !college) {
+    alert("Please fill in all details");
+    return;
+  }
+
+  if (!email.includes("@")) {
+    alert("Enter a valid email");
+    return;
+  }
+
+  if (phone.length < 10) {
+    alert("Enter a valid phone number");
+    return;
+  }
+
+  try {
+    /* 🔐 SERVER-SIDE ONE ATTEMPT CHECK */
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone, college })
+    });
+
+    if (!res.ok) {
+      alert("You have already attempted this exam. Re-attempt is not allowed.");
+      return;
+    }
+
+    /* ✅ STORE DETAILS FOR EXAM & PROCTORING */
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("systemCheckPassed", "false");
+
+    localStorage.setItem("candidate", name);
+    localStorage.setItem("candidateEmail", email);
+    localStorage.setItem("candidatePhone", phone);
+    localStorage.setItem("candidateCollege", college);
+
+    /* NEXT STEP */
+    window.location.href = "system-check.html";
+
+  } catch (err) {
+    alert("Server error. Please try again.");
+  }
+}
+</script>
+
+</body>
+</html>

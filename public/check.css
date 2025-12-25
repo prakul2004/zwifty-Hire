@@ -1,0 +1,25 @@
+body{
+  background:#020617;
+  color:white;
+  font-family:Inter;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.check-box{
+  background:#0f172a;
+  padding:40px;
+  border-radius:10px;
+  width:420px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:20px;
+  background:#22c55e;
+  border:none;
+  cursor:pointer;
+}

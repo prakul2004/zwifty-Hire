@@ -1,0 +1,198 @@
+:root {
+  --bg-main: #f8fafc;
+  --bg-dark: #0f172a;
+  --bg-card: #ffffff;
+  --border: #e5e7eb;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  --danger: #dc2626;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* TOP BAR */
+.topbar {
+  height: 64px;
+  background: var(--bg-dark);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.brand-sub {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.exam-info {
+  text-align: right;
+}
+
+.exam-name {
+  display: block;
+  font-size: 13px;
+  color: #cbd5f5;
+}
+
+.timer {
+  font-size: 18px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+/* LAYOUT */
+.layout {
+  display: flex;
+  height: calc(100vh - 64px);
+}
+
+/* LEFT */
+.exam-area {
+  flex: 3;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* INSTRUCTIONS */
+.instructions {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 28px;
+}
+
+.instructions h2 {
+  margin-bottom: 12px;
+}
+
+.instructions ul {
+  line-height: 1.8;
+  margin-bottom: 20px;
+  color: var(--text-muted);
+}
+
+/* BUTTON */
+.primary-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: #1d4ed8;
+}
+
+/* QUESTION */
+.question-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.question-header {
+  background: #f1f5f9;
+  padding: 14px 20px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+.question-body {
+  padding: 22px;
+}
+
+.question-body p {
+  margin-bottom: 16px;
+}
+
+.question-body label {
+  display: block;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+/* RIGHT */
+.proctor-panel {
+  flex: 1.2;
+  background: #020617;
+  padding: 22px;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.proctor-title {
+  color: #cbd5f5;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+video {
+  width: 100%;
+  border-radius: 6px;
+  border: 2px solid var(--danger);
+}
+
+.proctor-status {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #fca5a5;
+}
+#debugCanvas {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 300px;
+  border: 2px dashed red;
+}
+.hidden {
+  display: none;
+}
+
+/* Welcome Overlay */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.welcome-overlay h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.welcome-overlay p {
+  font-size: 16px;
+  color: #cbd5f5;
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zwifty | System Check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="check.css">
+</head>
+
+<body>
+
+<script>
+/* 🔐 AUTH CHECK */
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
+
+/* 🚫 BLOCK MOBILE DEVICES */
+if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+  alert("Mobile devices are not allowed. Please use a laptop or desktop.");
+  window.location.href = "login.html";
+}
+</script>
+
+<div class="check-wrapper">
+  <div class="check-card">
+
+    <h1>System Readiness & Instructions</h1>
+
+    <ul class="instructions">
+      <li>You must be alone in the room</li>
+      <li>Webcam and microphone must remain enabled</li>
+      <li>Mobile phones are strictly prohibited</li>
+      <li>Do not switch tabs or minimize the browser</li>
+      <li>Multiple violations will auto-submit the assessment</li>
+    </ul>
+
+    <div class="status">
+      <p id="camStatus">📷 Camera: Checking...</p>
+      <p id="micStatus">🎤 Microphone: Checking...</p>
+      <p id="fsStatus">🖥 Fullscreen: Required</p>
+    </div>
+
+    <button id="startBtn" disabled onclick="startAssessment()">
+      Start Assessment
+    </button>
+
+  </div>
+</div>
+
+<script>
+/* 🔐 AUTH CHECK */
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "login.html";
+}
+
+/* 🚫 BLOCK MOBILE */
+if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+  alert("Mobile devices are not allowed.");
+  window.location.href = "login.html";
+}
+
+let camOk = false;
+let micOk = false;
+
+/* 🎥 CAMERA + MIC CHECK */
+async function checkDevices() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    });
+
+    stream.getTracks().forEach(t => t.stop());
+
+    camOk = true;
+    micOk = true;
+
+    document.getElementById("camStatus").innerText = "📷 Camera: Ready";
+    document.getElementById("micStatus").innerText = "🎤 Microphone: Ready";
+
+    // ✅ ENABLE START BUTTON NOW
+    document.getElementById("startBtn").disabled = false;
+
+  } catch (err) {
+    alert("Camera and microphone access is mandatory.");
+  }
+}
+
+/* ▶ START EXAM */
+async function startAssessment() {
+  if (!camOk || !micOk) {
+    alert("Camera & microphone must be enabled.");
+    return;
+  }
+
+  try {
+    await document.documentElement.requestFullscreen();
+  } catch {
+    alert("Fullscreen permission is required.");
+    return;
+  }
+
+  localStorage.setItem("systemCheckPassed", "true");
+  window.location.href = "exam.html";
+}
+
+/* INIT */
+checkDevices();
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ZWIFTY Internship Exam</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#f4f6f8;overflow:hidden}
+#startScreen{
+  position:fixed;inset:0;background:#0f172a;color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999
+}
+#startScreen button{
+  padding:14px 28px;font-size:16px;border:none;border-radius:6px;
+  background:#22c55e;cursor:pointer
+}
+
+.exam-wrapper{display:flex;height:100vh}
+.exam-left{flex:3;padding:20px;background:#fff;overflow-y:auto}
+.exam-right{flex:1;background:#0f172a;color:#fff;padding:15px;border-left:4px solid #1e3c72}
+
+header{
+  background:#1e3c72;color:#fff;padding:12px 20px;border-radius:6px;
+  display:flex;justify-content:space-between
+}
+
+.option{padding:10px;margin:8px 0;background:#eaeaea;border-radius:5px;cursor:pointer}
+.option.selected{background:#c7d2fe}
+.option:hover{background:#dbeafe}
+
+button{margin-top:10px;padding:10px 18px;background:#1e3c72;color:#fff;border:none;border-radius:5px}
+button:disabled{background:#9ca3af;cursor:not-allowed}
+
+.proctor-video{width:100%;border-radius:8px;border:2px solid #38bdf8;background:black}
+.status-on{color:#22c55e;font-weight:bold}
+.status-off{color:#ff4d4f;font-weight:bold}
+
+#palette div{
+  color:#000;border-radius:4px;font-size:13px
+}
+</style>
+</head>
+
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen">
+  <h2>ZWIFTY Internship Exam</h2>
+  <p>Camera, Microphone & Fullscreen required</p>
+  <button onclick="beginExam()">Start Exam</button>
+</div>
+
+<div class="exam-wrapper">
+
+<!-- LEFT -->
+<div class="exam-left">
+
+<header>
+  <b>ZWIFTY INTERNSHIP EXAM</b>
+  <div id="timer">50:00</div>
+</header>
+
+<div style="display:flex;justify-content:space-between;margin:10px 0">
+  <span id="progress">Question 1 / 50</span>
+  <span id="autosave">💾 Saved</span>
+</div>
+
+<h3 id="question"></h3>
+<div id="options"></div>
+
+<button id="nextBtn" onclick="nextQuestion()">Next</button>
+<button id="submitBtn" onclick="confirmSubmit()" style="display:none;background:#16a34a">
+Submit Exam
+</button>
+<button onclick="toggleReview()">⭐ Mark for Review</button>
+
+</div>
+
+<!-- RIGHT -->
+<div class="exam-right">
+<h4>Live Proctoring</h4>
+<video id="video" class="proctor-video" autoplay muted playsinline></video>
+<p id="camStatus" class="status-off">📷 Camera: OFF</p>
+<p id="micStatus" class="status-off">🎤 Microphone: OFF</p>
+
+<h4>Question Palette</h4>
+<div id="palette" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"></div>
+</div>
+
+</div>
+
+<!-- ================= QUESTIONS + LOGIC ================= -->
+<script>
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("copy",e=>e.preventDefault());
+
+/* ================= 50 QUESTIONS ================= */
+const questionBank = [
+
+/* -------- APTITUDE (10) -------- */
+{q:"If 5x − 3 = 22, find x", o:["4","5","6","7"]},
+{q:"Average of first 10 natural numbers?", o:["5","5.5","6","10"]},
+{q:"A train covers 300km in 5 hours. Speed?", o:["50","60","70","80"]},
+{q:"15% of 240 equals?", o:["30","36","40","45"]},
+{q:"If CP = ₹800, SP = ₹920. Profit %?", o:["10%","12%","15%","20%"]},
+{q:"Ratio of 3 hours to 45 minutes?", o:["4:1","1:4","3:1","5:1"]},
+{q:"What is 2/5 of 250?", o:["50","80","100","125"]},
+{q:"If x:y = 7:9 and y:z = 3:5, x:z = ?", o:["7:15","21:45","21:15","7:5"]},
+{q:"Simple interest on ₹500 at 8% for 2 years?", o:["80","40","60","100"]},
+{q:"What is the cube of 4?", o:["16","32","64","128"]},
+
+/* -------- NUMERICAL ABILITY (10) -------- */
+{q:"LCM of 12 and 18?", o:["36","72","24","48"]},
+{q:"√196 equals?", o:["12","13","14","15"]},
+{q:"20% decrease of 200 equals?", o:["160","180","140","120"]},
+{q:"Which is greater: 3/4 or 5/8?", o:["3/4","5/8","Equal","Cannot say"]},
+{q:"If x = 2, value of x³ + x²?", o:["8","12","16","20"]},
+{q:"Find HCF of 24 and 36", o:["6","12","18","24"]},
+{q:"Convert 0.75 into percentage", o:["7.5%","75%","0.75%","750%"]},
+{q:"If speed doubles, time becomes?", o:["Double","Half","Same","Zero"]},
+{q:"Find 30% of 90", o:["27","30","33","36"]},
+{q:"Square of 15?", o:["225","215","205","195"]},
+
+/* -------- LOGICAL REASONING (10) -------- */
+{q:"Find next: 3, 6, 12, 24, ?", o:["30","36","48","60"]},
+{q:"Odd one out: Pen, Pencil, Eraser, Paper", o:["Pen","Pencil","Eraser","Paper"]},
+{q:"If A=1, B=2… Z=26, value of CAT?", o:["24","46","48","50"]},
+{q:"Find missing: AZ, BY, CX, ?", o:["DW","DV","EW","FV"]},
+{q:"Statement: All cats are animals. Conclusion?", o:["True","False","Uncertain","None"]},
+{q:"Mirror image of 12:45?", o:["11:15","10:15","9:15","12:45"]},
+{q:"If today is Friday, after 10 days?", o:["Sunday","Monday","Tuesday","Wednesday"]},
+{q:"Which number does not belong: 2,3,5,9,11", o:["3","5","9","11"]},
+{q:"Find next: 1,4,9,16, ?", o:["20","24","25","30"]},
+{q:"Opposite of North-East?", o:["South-East","South-West","North-West","East"]},
+
+/* -------- PYTHON CODING (10) -------- */
+{q:"Output of: print(2**3)", o:["6","8","9","Error"]},
+{q:"Which is mutable?", o:["tuple","string","list","int"]},
+{q:"Output: print(bool(0))", o:["True","False","0","Error"]},
+{q:"Which keyword defines a function?", o:["func","define","def","function"]},
+{q:"Output of len({1,2,2,3})?", o:["3","4","2","Error"]},
+{q:"Which symbol is used for comments?", o:["//","#","/*","--"]},
+{q:"Output: print(type(10.5))", o:["int","float","double","number"]},
+{q:"Correct loop for range 5?", o:["range(1,5)","range(5)","range(0,4)","loop(5)"]},
+{q:"Which raises exception?", o:["int('5')","int('a')","float(5)","str(10)"]},
+{q:"Which is correct variable name?", o:["1var","_var","var-1","var 1"]},
+
+/* -------- BUSINESS & MARKET (10) -------- */
+{q:"Break-even point means?", o:["No profit no loss","Profit","Loss","Revenue"]},
+{q:"What is EBITDA?", o:["Profit metric","Tax","Loan","Investment"]},
+{q:"Market leader strategy focuses on?", o:["Innovation","Defense","Low price","Exit"]},
+{q:"Which is intangible asset?", o:["Building","Machinery","Goodwill","Land"]},
+{q:"B2C stands for?", o:["Business to Consumer","Brand to Consumer","Buyer to Client","Business to Client"]},
+{q:"Which pricing strategy starts high then lowers?", o:["Penetration","Skimming","Loss leader","Bundle"]},
+{q:"Who are stakeholders?", o:["Owners only","Employees only","Customers only","All involved parties"]},
+{q:"What is cash flow?", o:["Profit","Revenue","Money movement","Investment"]},
+{q:"SWOT analysis helps in?", o:["Marketing","Strategy","Accounting","Sales only"]},
+{q:"Which is NOT a market?", o:["Monopoly","Oligopoly","Perfect competition","Automation"]},
+];
+
+const questions = questionBank.sort(()=>Math.random()-0.5);
+let current=0;
+let answers=JSON.parse(localStorage.getItem("answers")||"[]");
+let review={};
+
+function loadQuestion(){
+  document.getElementById("question").innerText=`Q${current+1}. ${questions[current].q}`;
+  document.getElementById("progress").innerText=`Question ${current+1} / ${questions.length}`;
+
+  const opt=document.getElementById("options");
+  opt.innerHTML="";
+  questions[current].o.forEach((o,i)=>{
+    const d=document.createElement("div");
+    d.className="option"+(answers[current]===i?" selected":"");
+    d.innerText=o;
+    d.onclick=()=>{
+      answers[current]=i;
+      localStorage.setItem("answers",JSON.stringify(answers));
+      document.getElementById("autosave").innerText="💾 Saved";
+      updatePalette();
+      loadQuestion();
+    };
+    opt.appendChild(d);
+  });
+
+  document.getElementById("submitBtn").style.display=
+    current===questions.length-1?"inline-block":"none";
+  document.getElementById("submitBtn").disabled=answers[current]===undefined;
+}
+
+function nextQuestion(){
+  if(current<questions.length-1){current++;loadQuestion();}
+}
+
+function confirmSubmit(){
+  if(confirm("Are you sure you want to submit? You cannot change answers.")){
+    submitExam();
+  }
+}
+
+function toggleReview(){
+  review[current]=!review[current];
+  updatePalette();
+}
+
+function updatePalette(){
+  const p=document.getElementById("palette");
+  p.innerHTML="";
+  questions.forEach((_,i)=>{
+    const b=document.createElement("div");
+    b.innerText=i+1;
+    b.style.padding="6px";
+    b.style.textAlign="center";
+    b.style.cursor="pointer";
+    b.style.background=
+      i===current?"#3b82f6":
+      review[i]?"#facc15":
+      answers[i]!==undefined?"#22c55e":"#9ca3af";
+    b.onclick=()=>{current=i;loadQuestion();}
+    p.appendChild(b);
+  });
+}
+
+function collectAnswers(){return answers;}
+
+loadQuestion();updatePalette();
+</script>
+
+<!-- PROCTOR LIBS -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="proctor.js"></script>
+
+</body>
+</html>
+
+
+

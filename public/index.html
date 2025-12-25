@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ZWIFTY Internship Exam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e3c72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+    }
+
+    .home-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .home-card {
+      background: #ffffff;
+      color: #1f2937;
+      width: 100%;
+      max-width: 460px;
+      padding: 35px 30px;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      animation: fadeIn 0.7s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .home-card h1 {
+      margin: 0;
+      font-size: 36px;
+      color: #1e3c72;
+      letter-spacing: 2px;
+    }
+
+    .home-card h2 {
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .divider {
+      width: 60px;
+      height: 4px;
+      background: #1e3c72;
+      margin: 18px auto;
+      border-radius: 4px;
+    }
+
+    .home-card p {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #4b5563;
+      margin-bottom: 22px;
+    }
+
+    .rules {
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: left;
+      font-size: 13.5px;
+      color: #334155;
+      margin-bottom: 22px;
+    }
+
+    .rules li {
+      margin-bottom: 6px;
+    }
+
+    .home-card button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #1e3c72, #2563eb);
+      color: #ffffff;
+      transition: all 0.3s ease;
+    }
+
+    .home-card button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="home-wrapper">
+    <div class="home-card">
+      <h1>ZWIFTY</h1>
+      <h2>Internship Assessment Portal</h2>
+
+      <div class="divider"></div>
+
+      <p>
+        Welcome to the <strong>Zwifty Internship Selection Test</strong>.
+        This is a secure and fully proctored online assessment designed
+        to evaluate your aptitude, logical thinking, coding fundamentals,
+        and business awareness.
+      </p>
+
+      <ul class="rules">
+        <li>✔ Use a laptop or desktop only</li>
+        <li>✔ Webcam & microphone are mandatory</li>
+        <li>✔ Fullscreen mode is compulsory</li>
+        <li>✔ Mobile phones are strictly prohibited</li>
+        <li>✔ Only one attempt is allowed</li>
+      </ul>
+
+      <button onclick="goToLogin()">Proceed to Login</button>
+
+      <p class="note">
+        ⚠ Any violation may result in automatic exam termination
+      </p>
+
+      <footer>
+        © 2025 Zwifty Private Limited · All Rights Reserved
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Clear any previous session
+    localStorage.clear();
+
+    function goToLogin() {
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>
